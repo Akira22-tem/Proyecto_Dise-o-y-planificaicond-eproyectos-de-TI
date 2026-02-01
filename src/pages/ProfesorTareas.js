@@ -47,6 +47,7 @@ const ProfesorTareas = ({ tareas, setTareas }) => {
       pdfUrl: null,
     });
     setShowNewTaskForm(false);
+    alert('Tarea creada exitosamente');
   };
 
   // Editar tarea existente
@@ -55,20 +56,27 @@ const ProfesorTareas = ({ tareas, setTareas }) => {
       ...tarea,
       nuevoPdf: null,
     });
+    setSelectedTarea(null); // Cerrar vista de detalles al editar
   };
 
   const handleSaveEdit = () => {
-    setTareas(
-      tareas.map((t) =>
-        t.id === editingTarea.id
-          ? {
-              ...editingTarea,
-              pdfUrl: editingTarea.nuevoPdf || editingTarea.pdfUrl,
-            }
-          : t
-      )
+    const tareaActualizada = {
+      ...editingTarea,
+      pdfUrl: editingTarea.nuevoPdf
+        ? `/docs/${editingTarea.nuevoPdf.name}`
+        : editingTarea.pdfUrl,
+    };
+
+    // Actualizar el array de tareas
+    const nuevasTareas = tareas.map((t) =>
+      t.id === editingTarea.id ? tareaActualizada : t
     );
+    setTareas(nuevasTareas);
+
     setEditingTarea(null);
+    alert(
+      '✅ Tarea actualizada exitosamente. Los estudiantes verán los cambios.'
+    );
   };
 
   // Eliminar tarea
@@ -76,6 +84,7 @@ const ProfesorTareas = ({ tareas, setTareas }) => {
     setTareas(tareas.filter((t) => t.id !== id));
     setShowDeleteConfirmation(null);
     setSelectedTarea(null);
+    alert('Tarea eliminada exitosamente');
   };
 
   // Ver detalles de tarea
@@ -106,7 +115,13 @@ const ProfesorTareas = ({ tareas, setTareas }) => {
         </div>
 
         <div className="bg-white rounded-xl p-6 border border-gray-200">
-          <form className="space-y-4">
+          <form
+            className="space-y-4"
+            onSubmit={(e) => {
+              e.preventDefault();
+              handleSaveEdit();
+            }}
+          >
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">
                 Título
@@ -121,6 +136,7 @@ const ProfesorTareas = ({ tareas, setTareas }) => {
                   })
                 }
                 className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500"
+                required
               />
             </div>
 
@@ -138,6 +154,7 @@ const ProfesorTareas = ({ tareas, setTareas }) => {
                 }
                 className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500"
                 rows="3"
+                required
               />
             </div>
 
@@ -176,6 +193,7 @@ const ProfesorTareas = ({ tareas, setTareas }) => {
                     })
                   }
                   className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500"
+                  required
                 />
               </div>
             </div>
@@ -184,18 +202,24 @@ const ProfesorTareas = ({ tareas, setTareas }) => {
               <label className="block text-sm font-medium text-gray-700 mb-2">
                 Modificar PDF
               </label>
-              <div className="flex items-center gap-4">
+              <div className="space-y-3">
                 {editingTarea.pdfUrl && !editingTarea.nuevoPdf && (
-                  <div className="flex items-center gap-2 text-sm text-gray-600">
+                  <div className="flex items-center gap-2 text-sm text-gray-600 bg-gray-50 p-3 rounded-lg">
                     <FileText className="w-4 h-4" />
                     <span>PDF actual: {editingTarea.pdfUrl}</span>
                   </div>
                 )}
-                <label className="flex items-center gap-2 px-4 py-2 bg-blue-50 text-blue-600 rounded-lg hover:bg-blue-100 transition-colors cursor-pointer">
-                  <Upload className="w-4 h-4" />
-                  {editingTarea.nuevoPdf
-                    ? editingTarea.nuevoPdf.name
-                    : 'Cambiar PDF'}
+                {editingTarea.nuevoPdf && (
+                  <div className="flex items-center gap-2 text-sm text-green-600 bg-green-50 p-3 rounded-lg">
+                    <FileText className="w-4 h-4" />
+                    <span>Nuevo PDF: {editingTarea.nuevoPdf.name}</span>
+                  </div>
+                )}
+                <label className="flex items-center justify-center gap-2 px-4 py-3 bg-blue-50 text-blue-600 rounded-lg hover:bg-blue-100 transition-colors cursor-pointer border-2 border-dashed border-blue-300">
+                  <Upload className="w-5 h-5" />
+                  <span className="font-medium">
+                    {editingTarea.nuevoPdf ? 'Cambiar PDF' : 'Subir nuevo PDF'}
+                  </span>
                   <input
                     type="file"
                     accept=".pdf"
@@ -211,11 +235,10 @@ const ProfesorTareas = ({ tareas, setTareas }) => {
               </div>
             </div>
 
-            <div className="flex gap-4 pt-4">
+            <div className="flex gap-4 pt-4 border-t">
               <button
-                type="button"
-                onClick={handleSaveEdit}
-                className="flex items-center gap-2 bg-emerald-500 text-white px-6 py-2 rounded-lg hover:bg-emerald-600 transition-colors"
+                type="submit"
+                className="flex items-center gap-2 bg-emerald-500 text-white px-6 py-3 rounded-lg hover:bg-emerald-600 transition-colors font-medium"
               >
                 <Save className="w-5 h-5" />
                 Guardar Cambios
@@ -223,12 +246,30 @@ const ProfesorTareas = ({ tareas, setTareas }) => {
               <button
                 type="button"
                 onClick={() => setEditingTarea(null)}
-                className="bg-gray-200 text-gray-700 px-6 py-2 rounded-lg hover:bg-gray-300 transition-colors"
+                className="bg-gray-200 text-gray-700 px-6 py-3 rounded-lg hover:bg-gray-300 transition-colors font-medium"
               >
                 Cancelar
               </button>
             </div>
           </form>
+        </div>
+
+        {/* Nota informativa */}
+        <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
+          <div className="flex items-start gap-3">
+            <div className="w-5 h-5 bg-blue-500 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5">
+              <span className="text-white text-xs font-bold">i</span>
+            </div>
+            <div className="text-sm text-blue-900">
+              <p className="font-semibold mb-1">
+                Los cambios se reflejarán automáticamente
+              </p>
+              <p className="text-blue-700">
+                Cuando guardes, los estudiantes verán inmediatamente la tarea
+                actualizada con los nuevos datos.
+              </p>
+            </div>
+          </div>
         </div>
       </div>
     );
