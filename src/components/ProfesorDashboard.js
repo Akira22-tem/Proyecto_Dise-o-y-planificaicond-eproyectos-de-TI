@@ -3,20 +3,21 @@ import Header from '../components/Header';
 import Sidebar from '../components/Sidebar';
 import ProfesorInicio from '../pages/ProfesorInicio';
 import ProfesorTareas from '../pages/ProfesorTareas';
-import Clases from '../pages/Clases';
+import Clases from '../pages/ProfesorClases';
+import ProfesorClases from '../pages/ProfesorClases';
 
 const ProfesorDashboard = ({ user, onLogout, tareas, setTareas }) => {
   const [activeSection, setActiveSection] = useState('inicio');
   const [menuOpen, setMenuOpen] = useState(false);
 
   const renderContent = () => {
-    switch(activeSection) {
+    switch (activeSection) {
       case 'inicio':
         return <ProfesorInicio tareas={tareas} />;
       case 'tareas':
         return <ProfesorTareas tareas={tareas} setTareas={setTareas} />;
       case 'clases':
-        return <Clases />;
+        return <ProfesorClases />;
       default:
         return <ProfesorInicio tareas={tareas} />;
     }
@@ -24,8 +25,8 @@ const ProfesorDashboard = ({ user, onLogout, tareas, setTareas }) => {
 
   return (
     <div className="min-h-screen bg-gray-50">
-      <Header 
-        user={user} 
+      <Header
+        user={user}
         onLogout={onLogout}
         menuOpen={menuOpen}
         setMenuOpen={setMenuOpen}
@@ -33,7 +34,7 @@ const ProfesorDashboard = ({ user, onLogout, tareas, setTareas }) => {
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div className="flex gap-8">
-          <Sidebar 
+          <Sidebar
             activeSection={activeSection}
             setActiveSection={setActiveSection}
             menuOpen={menuOpen}
@@ -41,9 +42,7 @@ const ProfesorDashboard = ({ user, onLogout, tareas, setTareas }) => {
             isProfesor={true}
           />
 
-          <main className="flex-1">
-            {renderContent()}
-          </main>
+          <main className="flex-1">{renderContent()}</main>
         </div>
       </div>
     </div>
