@@ -1,0 +1,105 @@
+═══════════════════════════════════════════════════════════════
+    EXTRAEDUC - INSTRUCCIONES DE INSTALACIÓN RÁPIDA
+═══════════════════════════════════════════════════════════════
+
+📌 REQUISITOS PREVIOS:
+   - Node.js instalado (descargar de: https://nodejs.org/)
+
+═══════════════════════════════════════════════════════════════
+
+🚀 PASOS PARA EJECUTAR EL PROYECTO:
+
+1. Abre el CMD (Símbolo del sistema)
+   - Presiona Win + R
+   - Escribe "cmd" y presiona Enter
+
+2. Navega a la carpeta del proyecto
+   cd C:\ruta\donde\esta\extraeduc
+
+3. Instala las dependencias (solo la primera vez)
+   npm install
+
+4. Instala Tailwind CSS (solo la primera vez)
+   npm install -D tailwindcss postcss autoprefixer
+
+5. Inicia la aplicación
+   npm start
+
+6. La aplicación se abrirá en tu navegador en:
+   http://localhost:3000
+
+═══════════════════════════════════════════════════════════════
+
+🔑 CREDENCIALES DE PRUEBA:
+
+   PROFESOR:
+   Email: profesor@espe.edu.ec
+   Contraseña: 123456
+
+   ESTUDIANTE:
+   Email: estudiante@espe.edu.ec
+   Contraseña: 123456
+
+═══════════════════════════════════════════════════════════════
+
+📝 COMANDOS ÚTILES:
+
+   Instalar dependencias:
+   npm install
+
+   Iniciar aplicación:
+   npm start
+
+   Crear build de producción:
+   npm run build
+
+   Detener la aplicación:
+   Ctrl + C (en la terminal)
+
+═══════════════════════════════════════════════════════════════
+
+❌ SOLUCIÓN DE PROBLEMAS:
+
+   Si npm install falla:
+   npm cache clean --force
+   npm install
+
+   Si el puerto 3000 está ocupado:
+   El sistema te preguntará si quieres usar otro puerto
+   Escribe "Y" y presiona Enter
+
+═══════════════════════════════════════════════════════════════
+
+📁 ESTRUCTURA DEL PROYECTO:
+
+   extraeduc/
+   ├── src/
+   │   ├── components/    (Componentes reutilizables)
+   │   ├── pages/         (Páginas de la aplicación)
+   │   ├── data/          (Datos precargados)
+   │   └── App.js         (Componente principal)
+   ├── public/
+   └── package.json
+
+═══════════════════════════════════════════════════════════════
+
+✨ FUNCIONALIDADES:
+
+   PROFESOR:
+   ✓ Crear y gestionar tareas
+   ✓ Ver estadísticas de clases
+   ✓ Administrar actividades
+
+   ESTUDIANTE:
+   ✓ Ver tareas asignadas
+   ✓ Subir entregas
+   ✓ Realizar evaluaciones con temporizador
+   ✓ Ver calificaciones
+
+═══════════════════════════════════════════════════════════════
+
+¡Listo! Tu plataforma ExtraEDUC está lista para usar.
+
+Para cualquier duda, consulta el archivo README.md
+
+═══════════════════════════════════════════════════════════════
