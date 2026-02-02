@@ -264,7 +264,7 @@ const Login = ({ onLogin }) => {
           {/* Logo móvil */}
           <div className="lg:hidden mb-8 text-center">
             <img
-              src="/mnt/user-data/uploads/1769998053773_image.png"
+              src={logo}
               alt="ExtraEDUC Logo"
               className="w-48 h-auto mx-auto mb-4"
             />
