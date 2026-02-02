@@ -8,7 +8,6 @@ import Evaluacion from '../pages/Evaluacion';
 
 const EstudianteDashboard = ({ user, onLogout, tareas, setTareas }) => {
   const [activeSection, setActiveSection] = useState('inicio');
-  const [menuOpen, setMenuOpen] = useState(false);
 
   const renderContent = () => {
     switch(activeSection) {
@@ -30,24 +29,18 @@ const EstudianteDashboard = ({ user, onLogout, tareas, setTareas }) => {
       <Header 
         user={user} 
         onLogout={onLogout}
-        menuOpen={menuOpen}
-        setMenuOpen={setMenuOpen}
       />
 
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <div className="flex gap-8">
-          <Sidebar 
-            activeSection={activeSection}
-            setActiveSection={setActiveSection}
-            menuOpen={menuOpen}
-            setMenuOpen={setMenuOpen}
-            isProfesor={false}
-          />
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 sm:py-6">
+        <Sidebar 
+          activeSection={activeSection}
+          setActiveSection={setActiveSection}
+          isProfesor={false}
+        />
 
-          <main className="flex-1">
-            {renderContent()}
-          </main>
-        </div>
+        <main className="mt-4 sm:mt-6">
+          {renderContent()}
+        </main>
       </div>
     </div>
   );
