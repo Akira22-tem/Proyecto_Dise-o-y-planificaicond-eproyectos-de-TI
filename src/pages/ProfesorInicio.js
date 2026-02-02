@@ -37,7 +37,7 @@ const ProfesorInicio = ({ tareas }) => {
             <div className="w-12 h-12 bg-green-100 rounded-xl flex items-center justify-center">
               <User className="w-6 h-6 text-green-600" />
             </div>
-            <span className="text-3xl font-bold text-gray-900">25</span>
+            <span className="text-3xl font-bold text-gray-900">20</span>
           </div>
           <h3 className="font-semibold text-gray-900">Estudiantes</h3>
           <p className="text-sm text-gray-500 mt-1">Inscritos en tus clases</p>
