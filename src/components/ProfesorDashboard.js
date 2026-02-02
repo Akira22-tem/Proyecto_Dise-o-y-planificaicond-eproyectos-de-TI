@@ -3,8 +3,10 @@ import Header from '../components/Header';
 import Sidebar from '../components/Sidebar';
 import ProfesorInicio from '../pages/ProfesorInicio';
 import ProfesorTareas from '../pages/ProfesorTareas';
+import ProfesorMatricula from '../pages/ProfesorMatricula';
 import Clases from '../pages/ProfesorClases';
 import ProfesorClases from '../pages/ProfesorClases';
+import { MOCK_DATA } from '../data/mockData';
 
 const ProfesorDashboard = ({ user, onLogout, tareas, setTareas }) => {
   const [activeSection, setActiveSection] = useState('inicio');
@@ -18,6 +20,8 @@ const ProfesorDashboard = ({ user, onLogout, tareas, setTareas }) => {
         return <ProfesorTareas tareas={tareas} setTareas={setTareas} />;
       case 'clases':
         return <ProfesorClases />;
+      case 'matricula':
+        return <ProfesorMatricula estudiantes={MOCK_DATA.estudiantes} />;
       default:
         return <ProfesorInicio tareas={tareas} />;
     }
