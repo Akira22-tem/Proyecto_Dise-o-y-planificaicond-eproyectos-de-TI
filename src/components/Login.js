@@ -120,12 +120,11 @@ const Login = ({ onLogin }) => {
     setError('');
   };
 
-  // PASO 2: Pantalla de verificación
   if (!isLogin && registrationStep === 2) {
     return (
       <div className="min-h-screen bg-white flex">
         {/* Panel izquierdo - Decorativo */}
-        <div className="hidden lg:flex lg:w-1/2 bg-gradient-to-br from-blue-600 via-blue-700 to-blue-900 relative overflow-hidden">
+        <div className="hidden lg:flex lg:w-1/2 bg-gradient-to-br from-blue-00 via-blue-700 to-blue-900 relative overflow-hidden">
           <div className="absolute inset-0 opacity-10">
             <div className="absolute top-20 left-20 w-72 h-72 bg-white rounded-full blur-3xl"></div>
             <div className="absolute bottom-20 right-20 w-96 h-96 bg-orange-400 rounded-full blur-3xl"></div>
