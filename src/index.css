@@ -15,3 +15,18 @@ code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;
 }
+
+/* Estilos personalizados de ExtraEDUC */
+@layer utilities {
+  .bg-primary-blue {
+    background-color: #003366;
+  }
+  
+  .bg-hover-blue {
+    background-color: #004080;
+  }
+  
+  .text-primary-blue {
+    color: #003366;
+  }
+}
