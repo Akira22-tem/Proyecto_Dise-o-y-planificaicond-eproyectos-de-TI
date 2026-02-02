@@ -6,6 +6,7 @@ const Sidebar = ({ activeSection, setActiveSection, menuOpen, setMenuOpen, isPro
     { id: 'inicio', label: 'Inicio', icon: Home },
     { id: 'clases', label: 'Clases', icon: Book },
     { id: 'tareas', label: 'Tareas', icon: FileText },
+    { id: 'matricula', label: 'Matrícula', icon: CheckCircle },
   ];
 
   const estudianteMenuItems = [
