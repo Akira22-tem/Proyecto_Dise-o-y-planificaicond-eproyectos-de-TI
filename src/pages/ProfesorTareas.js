@@ -11,6 +11,8 @@ import {
   Clock,
   Download,
   Save,
+  Star,
+  MessageSquare,
 } from 'lucide-react';
 
 const ProfesorTareas = ({ tareas, setTareas }) => {
@@ -18,6 +20,9 @@ const ProfesorTareas = ({ tareas, setTareas }) => {
   const [selectedTarea, setSelectedTarea] = useState(null);
   const [editingTarea, setEditingTarea] = useState(null);
   const [showDeleteConfirmation, setShowDeleteConfirmation] = useState(null);
+  const [showGradeModal, setShowGradeModal] = useState(null);
+  const [gradeValue, setGradeValue] = useState('');
+  const [gradeComment, setGradeComment] = useState('');
   const [newTask, setNewTask] = useState({
     titulo: '',
     descripcion: '',
@@ -37,6 +42,8 @@ const ProfesorTareas = ({ tareas, setTareas }) => {
       claseId: 1,
       archivoEntregado: null,
       fechaEnvio: null,
+      calificacion: null,
+      comentario: null,
     };
     setTareas([...tareas, task]);
     setNewTask({
@@ -50,13 +57,52 @@ const ProfesorTareas = ({ tareas, setTareas }) => {
     alert('Tarea creada exitosamente');
   };
 
+  // Calificar tarea
+  const handleOpenGradeModal = (tarea) => {
+    setShowGradeModal(tarea);
+    setGradeValue(tarea.calificacion || '');
+    setGradeComment(tarea.comentario || '');
+  };
+
+  const handleSubmitGrade = () => {
+    if (!gradeValue || gradeValue < 0 || gradeValue > 10) {
+      alert('Por favor ingresa una calificación válida entre 0 y 10');
+      return;
+    }
+
+    const nuevasTareas = tareas.map((t) =>
+      t.id === showGradeModal.id
+        ? { 
+            ...t, 
+            calificacion: parseFloat(gradeValue),
+            comentario: gradeComment.trim() || null
+          }
+        : t
+    );
+    setTareas(nuevasTareas);
+
+    // Actualizar la tarea seleccionada si está abierta
+    if (selectedTarea && selectedTarea.id === showGradeModal.id) {
+      setSelectedTarea({ 
+        ...showGradeModal, 
+        calificacion: parseFloat(gradeValue),
+        comentario: gradeComment.trim() || null
+      });
+    }
+
+    setShowGradeModal(null);
+    setGradeValue('');
+    setGradeComment('');
+    alert('✅ Tarea calificada exitosamente');
+  };
+
   // Editar tarea existente
   const handleEditTarea = (tarea) => {
     setEditingTarea({
       ...tarea,
       nuevoPdf: null,
     });
-    setSelectedTarea(null); // Cerrar vista de detalles al editar
+    setSelectedTarea(null);
   };
 
   const handleSaveEdit = () => {
@@ -67,7 +113,6 @@ const ProfesorTareas = ({ tareas, setTareas }) => {
         : editingTarea.pdfUrl,
     };
 
-    // Actualizar el array de tareas
     const nuevasTareas = tareas.map((t) =>
       t.id === editingTarea.id ? tareaActualizada : t
     );
@@ -94,7 +139,7 @@ const ProfesorTareas = ({ tareas, setTareas }) => {
 
   // Estadísticas de entregas
   const getEstadisticas = (tarea) => {
-    const totalEstudiantes = 25; // Del mockData
+    const totalEstudiantes = 25;
     const entregadas = tarea.estado === 'entregada' ? 1 : 0;
     const pendientes = totalEstudiantes - entregadas;
     return { total: totalEstudiantes, entregadas, pendientes };
@@ -254,7 +299,6 @@ const ProfesorTareas = ({ tareas, setTareas }) => {
           </form>
         </div>
 
-        {/* Nota informativa */}
         <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
           <div className="flex items-start gap-3">
             <div className="w-5 h-5 bg-blue-500 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5">
@@ -281,6 +325,92 @@ const ProfesorTareas = ({ tareas, setTareas }) => {
 
     return (
       <div className="space-y-6">
+        {/* Modal de calificación */}
+        {showGradeModal && (
+          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+            <div className="bg-white rounded-2xl p-6 max-w-md w-full shadow-2xl">
+              <div className="flex flex-col">
+                <div className="flex items-center justify-between mb-4">
+                  <h3 className="text-xl font-bold text-gray-900">
+                    Calificar Tarea
+                  </h3>
+                  <button
+                    onClick={() => {
+                      setShowGradeModal(null);
+                      setGradeValue('');
+                      setGradeComment('');
+                    }}
+                    className="text-gray-400 hover:text-gray-600"
+                  >
+                    <X className="w-6 h-6" />
+                  </button>
+                </div>
+
+                <div className="mb-4">
+                  <p className="text-sm text-gray-600 mb-1">Estudiante:</p>
+                  <p className="font-semibold text-gray-900">Kevin Yugla</p>
+                </div>
+
+                <div className="mb-4">
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Calificación (0-10)
+                  </label>
+                  <input
+                    type="number"
+                    min="0"
+                    max="10"
+                    step="0.1"
+                    value={gradeValue}
+                    onChange={(e) => setGradeValue(e.target.value)}
+                    className="w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 text-lg font-semibold text-center"
+                    placeholder="0.0"
+                  />
+                  <p className="text-xs text-gray-500 mt-2 text-center">
+                    Ingresa un valor entre 0 y 10
+                  </p>
+                </div>
+
+                <div className="mb-6">
+                  <label className="block text-sm font-medium text-gray-700 mb-2 flex items-center gap-2">
+                    <MessageSquare className="w-4 h-4" />
+                    Comentario (Opcional)
+                  </label>
+                  <textarea
+                    value={gradeComment}
+                    onChange={(e) => setGradeComment(e.target.value)}
+                    className="w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 resize-none"
+                    rows="4"
+                    placeholder="Escribe un comentario sobre el desempeño del estudiante..."
+                  />
+                  <p className="text-xs text-gray-500 mt-2">
+                    El estudiante podrá ver este comentario
+                  </p>
+                </div>
+
+                <div className="flex gap-3">
+                  <button
+                    onClick={handleSubmitGrade}
+                    className="flex-1 flex items-center justify-center gap-2 bg-emerald-500 text-white px-6 py-3 rounded-lg hover:bg-emerald-600 transition-colors font-medium"
+                  >
+                    <Star className="w-5 h-5" />
+                    Guardar Calificación
+                  </button>
+                  <button
+                    onClick={() => {
+                      setShowGradeModal(null);
+                      setGradeValue('');
+                      setGradeComment('');
+                    }}
+                    className="bg-gray-200 text-gray-700 px-6 py-3 rounded-lg hover:bg-gray-300 transition-colors font-medium"
+                  >
+                    Cancelar
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
+
         {/* Modal de confirmación de eliminación */}
         {showDeleteConfirmation && (
           <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
@@ -352,6 +482,12 @@ const ProfesorTareas = ({ tareas, setTareas }) => {
                   ? 'PENDIENTE'
                   : 'ENTREGADA'}
               </span>
+              {selectedTarea.calificacion !== null && (
+                <span className="px-3 py-1 rounded-full text-xs font-medium bg-emerald-100 text-emerald-700 flex items-center gap-1">
+                  <Star className="w-3 h-3" />
+                  {selectedTarea.calificacion}/10
+                </span>
+              )}
             </div>
 
             <div className="flex gap-2">
@@ -444,21 +580,57 @@ const ProfesorTareas = ({ tareas, setTareas }) => {
             {selectedTarea.estado === 'entregada' &&
             selectedTarea.archivoEntregado ? (
               <div className="bg-green-50 border border-green-200 rounded-lg p-4">
-                <div className="flex items-center justify-between">
+                <div className="flex items-center justify-between mb-4">
                   <div className="flex items-center gap-3">
                     <CheckCircle className="w-5 h-5 text-green-600" />
                     <div>
-                      <p className="font-medium text-gray-900">Kevin Yugla</p>
+                      <div className="flex items-center gap-2">
+                        <p className="font-medium text-gray-900">Kevin Yugla</p>
+                        {selectedTarea.calificacion !== null && (
+                          <span className="px-2 py-0.5 rounded-full text-xs font-medium bg-emerald-100 text-emerald-700 flex items-center gap-1">
+                            <Star className="w-3 h-3" />
+                            {selectedTarea.calificacion}/10
+                          </span>
+                        )}
+                      </div>
                       <p className="text-sm text-gray-600">
                         Entregado: {selectedTarea.fechaEnvio}
                       </p>
                     </div>
                   </div>
-                  <button className="flex items-center gap-2 px-4 py-2 bg-blue-50 text-blue-600 rounded-lg hover:bg-blue-100 transition-colors text-sm">
-                    <Download className="w-4 h-4" />
-                    Descargar
-                  </button>
+                  <div className="flex gap-2">
+                    <button className="flex items-center gap-2 px-4 py-2 bg-blue-50 text-blue-600 rounded-lg hover:bg-blue-100 transition-colors text-sm">
+                      <Download className="w-4 h-4" />
+                      Descargar
+                    </button>
+                    <button
+                      onClick={() => handleOpenGradeModal(selectedTarea)}
+                      className="flex items-center gap-2 px-4 py-2 bg-emerald-50 text-emerald-600 rounded-lg hover:bg-emerald-100 transition-colors text-sm font-medium"
+                    >
+                      <Star className="w-4 h-4" />
+                      {selectedTarea.calificacion !== null
+                        ? 'Editar Nota'
+                        : 'Calificar'}
+                    </button>
+                  </div>
                 </div>
+                
+                {/* Comentario del profesor */}
+                {selectedTarea.comentario && (
+                  <div className="bg-white border border-gray-200 rounded-lg p-4 mt-3">
+                    <div className="flex items-start gap-2">
+                      <MessageSquare className="w-4 h-4 text-gray-500 mt-0.5" />
+                      <div className="flex-1">
+                        <p className="text-xs font-medium text-gray-500 mb-1">
+                          Comentario del profesor:
+                        </p>
+                        <p className="text-sm text-gray-700">
+                          {selectedTarea.comentario}
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                )}
               </div>
             ) : (
               <div className="bg-gray-50 border border-gray-200 rounded-lg p-6 text-center">
@@ -622,6 +794,12 @@ const ProfesorTareas = ({ tareas, setTareas }) => {
                       >
                         {tarea.tipo.toUpperCase()}
                       </span>
+                      {tarea.calificacion !== null && (
+                        <span className="px-3 py-1 rounded-full text-xs font-medium bg-emerald-100 text-emerald-700 flex items-center gap-1">
+                          <Star className="w-3 h-3" />
+                          {tarea.calificacion}/10
+                        </span>
+                      )}
                     </div>
                     <h3 className="text-lg font-semibold text-gray-900">
                       {tarea.titulo}
