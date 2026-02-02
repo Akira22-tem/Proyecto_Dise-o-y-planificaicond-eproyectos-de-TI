@@ -1,9 +1,15 @@
 import React from 'react';
-import { BookOpen, CheckCircle, Clock } from 'lucide-react';
+import { BookOpen, CheckCircle, Clock, Star } from 'lucide-react';
 
 const EstudianteInicio = ({ tareas }) => {
   const tareasPendientes = tareas.filter((t) => t.estado === 'pendiente');
   const tareasCompletadas = tareas.filter((t) => t.estado === 'entregada');
+  
+  // Calcular promedio de calificaciones
+  const tareasCalificadas = tareas.filter((t) => t.calificacion !== null);
+  const promedio = tareasCalificadas.length > 0
+    ? (tareasCalificadas.reduce((sum, t) => sum + t.calificacion, 0) / tareasCalificadas.length).toFixed(1)
+    : null;
 
   return (
     <div className="space-y-6">
@@ -12,7 +18,7 @@ const EstudianteInicio = ({ tareas }) => {
         <p className="text-blue-100">Accede a tus tareas y evaluaciones</p>
       </div>
 
-      <div className="grid md:grid-cols-2 gap-6">
+      <div className="grid md:grid-cols-3 gap-6">
         <div className="bg-white rounded-xl p-6 border border-gray-200 hover:shadow-lg transition-shadow">
           <div className="flex items-center gap-3 mb-4">
             <div className="w-12 h-12 bg-yellow-100 rounded-lg flex items-center justify-center">
@@ -67,6 +73,24 @@ const EstudianteInicio = ({ tareas }) => {
               ))}
             </div>
           )}
+        </div>
+
+        {/* Tarjeta de promedio simplificada */}
+        <div className="bg-white rounded-xl p-6 border border-gray-200 hover:shadow-lg transition-shadow">
+          <div className="flex items-center gap-3 mb-4">
+            <div className="w-12 h-12 bg-emerald-100 rounded-lg flex items-center justify-center">
+              <Star className="w-6 h-6 text-emerald-600" />
+            </div>
+            <h3 className="font-semibold text-gray-900">Promedio</h3>
+          </div>
+          <div className="text-4xl font-bold text-emerald-600 mb-2">
+            {promedio !== null ? promedio : '--'}
+          </div>
+          <p className="text-sm text-gray-500">
+            {promedio !== null 
+              ? 'Calificación promedio' 
+              : 'Sin calificaciones aún'}
+          </p>
         </div>
       </div>
 
