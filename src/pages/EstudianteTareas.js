@@ -9,14 +9,16 @@ import {
   Trash2,
   ArrowLeft,
   FileText,
-  AlertCircle,
+  Star,
+  MessageSquare,
+  Lock,
 } from 'lucide-react';
 
 const EstudianteTareas = ({ tareas, setTareas }) => {
   const [selectedTarea, setSelectedTarea] = useState(null);
   const [selectedFile, setSelectedFile] = useState(null);
   const [showConfirmation, setShowConfirmation] = useState(false);
-  const [confirmationType, setConfirmationType] = useState(''); // 'submit', 'modify', 'delete'
+  const [confirmationType, setConfirmationType] = useState('');
 
   const handleFileSelect = (e) => {
     if (e.target.files[0]) {
@@ -44,7 +46,6 @@ const EstudianteTareas = ({ tareas, setTareas }) => {
     setShowConfirmation(true);
     setSelectedFile(null);
 
-    // Actualizar la tarea seleccionada con los nuevos datos
     setTimeout(() => {
       setSelectedTarea(tareas.find((t) => t.id === selectedTarea.id));
     }, 100);
@@ -116,7 +117,6 @@ const EstudianteTareas = ({ tareas, setTareas }) => {
       <div className="space-y-6">
         <h2 className="text-2xl font-bold text-gray-900">Mis Tareas</h2>
 
-        {/* Mensaje de felicitación si no hay tareas pendientes */}
         {tareasPendientes.length === 0 && tareasEntregadas.length > 0 && (
           <div className="bg-gradient-to-r from-green-500 to-emerald-600 rounded-xl p-6 text-white">
             <div className="flex items-center gap-4">
@@ -134,7 +134,6 @@ const EstudianteTareas = ({ tareas, setTareas }) => {
           </div>
         )}
 
-        {/* Mensaje si no hay tareas en absoluto */}
         {tareas.length === 0 && (
           <div className="bg-white rounded-xl p-12 border border-gray-200 text-center">
             <div className="w-20 h-20 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
@@ -220,7 +219,7 @@ const EstudianteTareas = ({ tareas, setTareas }) => {
                 >
                   <div className="flex justify-between items-start mb-4">
                     <div className="flex-1">
-                      <div className="flex items-center gap-2 mb-2">
+                      <div className="flex items-center gap-2 mb-2 flex-wrap">
                         <span
                           className={`px-3 py-1 rounded-full text-xs font-medium ${
                             tarea.tipo === 'tarea'
@@ -235,6 +234,12 @@ const EstudianteTareas = ({ tareas, setTareas }) => {
                         <span className="px-3 py-1 rounded-full text-xs font-medium bg-green-100 text-green-700">
                           ENTREGADA
                         </span>
+                        {tarea.calificacion !== null && (
+                          <span className="px-3 py-1 rounded-full text-xs font-medium bg-emerald-100 text-emerald-700 flex items-center gap-1">
+                            <Star className="w-3 h-3" />
+                            Calificada: {tarea.calificacion}/10
+                          </span>
+                        )}
                       </div>
                       <h3 className="text-lg font-semibold text-gray-900">
                         {tarea.titulo}
@@ -259,7 +264,9 @@ const EstudianteTareas = ({ tareas, setTareas }) => {
                   </div>
 
                   <div className="text-sm text-blue-600 font-medium">
-                    Click para ver detalles y modificar →
+                    {tarea.calificacion !== null
+                      ? 'Click para ver detalles y calificación →'
+                      : 'Click para ver detalles y modificar →'}
                   </div>
                 </div>
               ))}
@@ -271,6 +278,8 @@ const EstudianteTareas = ({ tareas, setTareas }) => {
   }
 
   // Vista de detalles de tarea
+  const isGraded = selectedTarea.calificacion !== null;
+
   return (
     <div className="space-y-6">
       {/* Modal de confirmación */}
@@ -339,7 +348,7 @@ const EstudianteTareas = ({ tareas, setTareas }) => {
 
       {/* Detalles de la tarea */}
       <div className="bg-white rounded-xl p-8 border border-gray-200">
-        <div className="flex items-center gap-2 mb-4">
+        <div className="flex items-center gap-2 mb-4 flex-wrap">
           <span
             className={`px-3 py-1 rounded-full text-xs font-medium ${
               selectedTarea.tipo === 'tarea'
@@ -360,6 +369,12 @@ const EstudianteTareas = ({ tareas, setTareas }) => {
           >
             {selectedTarea.estado === 'pendiente' ? 'PENDIENTE' : 'ENTREGADA'}
           </span>
+          {selectedTarea.calificacion !== null && (
+            <span className="px-3 py-1 rounded-full text-xs font-medium bg-emerald-100 text-emerald-700 flex items-center gap-1">
+              <Star className="w-3 h-3" />
+              Calificación: {selectedTarea.calificacion}/10
+            </span>
+          )}
         </div>
 
         <h2 className="text-2xl font-bold text-gray-900 mb-4">
@@ -390,37 +405,105 @@ const EstudianteTareas = ({ tareas, setTareas }) => {
           )}
         </div>
 
+        {/* Calificación destacada */}
+        {selectedTarea.calificacion !== null && (
+          <div className="bg-gradient-to-r from-emerald-500 to-teal-600 rounded-xl p-6 text-white mb-6">
+            <div className="flex items-center justify-between mb-4">
+              <div>
+                <p className="text-emerald-100 text-sm mb-1">Tu Calificación</p>
+                <div className="flex items-center gap-3">
+                  <Star className="w-8 h-8" />
+                  <span className="text-4xl font-bold">
+                    {selectedTarea.calificacion}
+                  </span>
+                  <span className="text-2xl text-emerald-100">/10</span>
+                </div>
+              </div>
+              <div className="text-right">
+                <p className="text-sm text-emerald-100">
+                  {selectedTarea.calificacion >= 7
+                    ? '¡Excelente trabajo!'
+                    : selectedTarea.calificacion >= 5
+                      ? 'Buen esfuerzo'
+                      : 'Sigue practicando'}
+                </p>
+              </div>
+            </div>
+            
+            {/* Comentario del profesor */}
+            {selectedTarea.comentario && (
+              <div className="bg-white bg-opacity-20 rounded-lg p-4 mt-4">
+                <div className="flex items-start gap-2">
+                  <MessageSquare className="w-5 h-5 mt-0.5 flex-shrink-0" />
+                  <div className="flex-1">
+                    <p className="text-xs text-emerald-100 mb-1 font-medium">
+                      Comentario del profesor:
+                    </p>
+                    <p className="text-white text-sm">
+                      {selectedTarea.comentario}
+                    </p>
+                  </div>
+                </div>
+              </div>
+            )}
+          </div>
+        )}
+
         {/* Archivo entregado */}
         {selectedTarea.estado === 'entregada' &&
           selectedTarea.archivoEntregado && (
-            <div className="bg-green-50 border border-green-200 rounded-lg p-4 mb-6">
+            <div className={`border rounded-lg p-4 mb-6 ${
+              isGraded 
+                ? 'bg-gray-50 border-gray-300' 
+                : 'bg-green-50 border-green-200'
+            }`}>
               <div className="flex items-center gap-3 mb-3">
-                <FileText className="w-5 h-5 text-green-600" />
+                <FileText className={`w-5 h-5 ${isGraded ? 'text-gray-600' : 'text-green-600'}`} />
                 <div className="flex-1">
-                  <p className="text-sm font-medium text-green-900">
+                  <p className={`text-sm font-medium ${isGraded ? 'text-gray-900' : 'text-green-900'}`}>
                     Archivo entregado
                   </p>
-                  <p className="text-sm text-green-700">
+                  <p className={`text-sm ${isGraded ? 'text-gray-700' : 'text-green-700'}`}>
                     {selectedTarea.archivoEntregado}
                   </p>
                 </div>
+                {isGraded && (
+                  <Lock className="w-5 h-5 text-gray-400" />
+                )}
               </div>
-              <div className="flex gap-3">
-                <button
-                  onClick={handleModifyEntrega}
-                  className="flex items-center gap-2 px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors text-sm font-medium"
-                >
-                  <Edit className="w-4 h-4" />
-                  Modificar Entrega
-                </button>
-                <button
-                  onClick={handleDeleteEntrega}
-                  className="flex items-center gap-2 px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 transition-colors text-sm font-medium"
-                >
-                  <Trash2 className="w-4 h-4" />
-                  Eliminar Entrega
-                </button>
-              </div>
+              
+              {isGraded ? (
+                <div className="bg-blue-50 border border-blue-200 rounded-lg p-3">
+                  <div className="flex items-start gap-2">
+                    <div className="w-5 h-5 bg-blue-500 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5">
+                      <span className="text-white text-xs font-bold">i</span>
+                    </div>
+                    <div className="text-sm text-blue-900">
+                      <p className="font-semibold">Tarea calificada</p>
+                      <p className="text-blue-700 mt-1">
+                        No puedes modificar ni eliminar tu entrega porque ya ha sido calificada por el profesor.
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              ) : (
+                <div className="flex gap-3">
+                  <button
+                    onClick={handleModifyEntrega}
+                    className="flex items-center gap-2 px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors text-sm font-medium"
+                  >
+                    <Edit className="w-4 h-4" />
+                    Modificar Entrega
+                  </button>
+                  <button
+                    onClick={handleDeleteEntrega}
+                    className="flex items-center gap-2 px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 transition-colors text-sm font-medium"
+                  >
+                    <Trash2 className="w-4 h-4" />
+                    Eliminar Entrega
+                  </button>
+                </div>
+              )}
             </div>
           )}
 
