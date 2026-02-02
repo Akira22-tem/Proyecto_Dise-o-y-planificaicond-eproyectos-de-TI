@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import {
   Clock,
-  User,
   Video,
   Calendar,
   ArrowLeft,
@@ -9,7 +8,6 @@ import {
   MessageCircle,
   BookOpen,
   Link as LinkIcon,
-  ExternalLink,
   Users,
   Upload,
   Plus,
