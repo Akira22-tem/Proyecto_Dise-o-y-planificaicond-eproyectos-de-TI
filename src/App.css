@@ -9,6 +9,7 @@
 }
 
 body {
+  margin: 0;
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
     'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
     sans-serif;
@@ -25,4 +26,108 @@ code {
 .bg-clip-text {
   -webkit-background-clip: text;
   background-clip: text;
+}
+
+/* Navegación principal con azul marino exacto */
+.nav-principal {
+  background-color: #003d7a;
+}
+
+.nav-principal button {
+  position: relative;
+  transition: all 0.2s ease;
+}
+
+.nav-principal button:hover {
+  background-color: #004a94;
+}
+
+/* Subrayado naranja para opción activa */
+.nav-principal button.active::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: linear-gradient(90deg, #fb923c 0%, #f97316 50%, #fbbf24 100%);
+}
+
+/* Badge de notificaciones con animación */
+.notification-badge {
+  animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
+}
+
+/* Animación suave para el subrayado */
+@keyframes slideIn {
+  from {
+    transform: scaleX(0);
+  }
+  to {
+    transform: scaleX(1);
+  }
+}
+
+.nav-underline {
+  animation: slideIn 0.3s ease-out;
+  transform-origin: left;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .nav-principal {
+    flex-direction: column;
+  }
+  
+  .nav-principal button {
+    width: 100%;
+    border-right: none !important;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  }
+  
+  .nav-principal button:first-child {
+    border-radius: 0.5rem 0.5rem 0 0;
+  }
+  
+  .nav-principal button:last-child {
+    border-radius: 0 0 0.5rem 0.5rem;
+    border-bottom: none;
+  }
+  
+  /* El subrayado se convierte en barra lateral en móvil */
+  .nav-principal button.active::after {
+    height: auto;
+    width: 4px;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: auto;
+  }
+}
+
+/* Utilidades adicionales */
+.shadow-soft {
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+}
+
+.transition-smooth {
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Estilos para el avatar del usuario */
+.user-avatar {
+  transition: all 0.2s ease;
+}
+
+.user-avatar:hover {
+  transform: scale(1.05);
 }
