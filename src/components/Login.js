@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
+import logo from '../assets/ExtraEDUC.png';
+
+
 import {
-  Book,
   Mail,
   Lock,
   User,
@@ -14,7 +16,7 @@ import { MOCK_DATA } from '../data/mockData';
 const Login = ({ onLogin }) => {
   const [isLogin, setIsLogin] = useState(true);
   const [showPassword, setShowPassword] = useState(false);
-  const [registrationStep, setRegistrationStep] = useState(1); // 1: Datos básicos, 2: Verificación
+  const [registrationStep, setRegistrationStep] = useState(1);
   const [formData, setFormData] = useState({
     email: '',
     password: '',
@@ -37,7 +39,6 @@ const Login = ({ onLogin }) => {
     setError('');
 
     if (isLogin) {
-      // Proceso de login
       const user = MOCK_DATA.users.find(
         (u) => u.email === formData.email && u.password === formData.password
       );
@@ -47,9 +48,7 @@ const Login = ({ onLogin }) => {
         setError('Credenciales incorrectas');
       }
     } else {
-      // Proceso de registro
       if (formData.role === 'estudiante') {
-        // Registro directo para estudiantes
         const newUser = {
           id: MOCK_DATA.users.length + 1,
           ...formData,
@@ -57,7 +56,6 @@ const Login = ({ onLogin }) => {
         MOCK_DATA.users.push(newUser);
         onLogin(newUser);
       } else {
-        // Para profesores, ir al paso 2 (verificación)
         setRegistrationStep(2);
       }
     }
@@ -72,7 +70,6 @@ const Login = ({ onLogin }) => {
       return;
     }
 
-    // En el prototipo, cualquier código de 6 dígitos es válido
     const newUser = {
       id: MOCK_DATA.users.length + 1,
       ...formData,
@@ -91,7 +88,6 @@ const Login = ({ onLogin }) => {
     newCode[index] = value;
     setVerificationCode(newCode);
 
-    // Auto-focus siguiente input
     if (value && index < 5) {
       const nextInput = document.getElementById(`code-${index + 1}`);
       if (nextInput) nextInput.focus();
@@ -124,43 +120,61 @@ const Login = ({ onLogin }) => {
     setError('');
   };
 
-  // PASO 2: Pantalla de verificación (solo para profesores)
+  // PASO 2: Pantalla de verificación
   if (!isLogin && registrationStep === 2) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-emerald-50 via-teal-50 to-cyan-50 flex items-center justify-center p-4">
-        <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAiIGhlaWdodD0iNjAiIHZpZXdCb3g9IjAgMCA2MCA2MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZyBmaWxsPSJub25lIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjxwYXRoIGQ9Ik0zNiAxOGMzLjMxIDAgNiAyLjY5IDYgNnMtMi42OSA2LTYgNi02LTIuNjktNi02IDIuNjktNiA2LTZ6TTI0IDQyYzMuMzEgMCA2IDIuNjkgNiA2cy0yLjY5IDYtNiA2LTYtMi42OS02LTYgMi42OS02IDYtNnoiIHN0cm9rZT0iIzEwYjk4MSIgc3Ryb2tlLXdpZHRoPSIuNSIgb3BhY2l0eT0iLjEiLz48L2c+PC9zdmc+')] opacity-30"></div>
+      <div className="min-h-screen bg-white flex">
+        {/* Panel izquierdo - Decorativo */}
+        <div className="hidden lg:flex lg:w-1/2 bg-gradient-to-br from-blue-600 via-blue-700 to-blue-900 relative overflow-hidden">
+          <div className="absolute inset-0 opacity-10">
+            <div className="absolute top-20 left-20 w-72 h-72 bg-white rounded-full blur-3xl"></div>
+            <div className="absolute bottom-20 right-20 w-96 h-96 bg-orange-400 rounded-full blur-3xl"></div>
+          </div>
+          <div className="relative z-10 flex flex-col items-center justify-center w-full p-12 text-white">
+            <img
+              src= {logo}
+              alt="ExtraEDUC Logo"
+              className="w-64 h-auto mb-8"
+            />
+            <h2 className="text-3xl font-bold mb-4 text-center">
+              Verificación de Profesor
+            </h2>
+            <p className="text-blue-100 text-center max-w-md">
+              Estamos verificando tu identidad para garantizar la seguridad de
+              la plataforma
+            </p>
+          </div>
+        </div>
 
-        <div className="w-full max-w-md relative">
-          <div className="bg-white/80 backdrop-blur-xl rounded-3xl shadow-2xl p-8 border border-emerald-100">
+        {/* Panel derecho - Formulario */}
+        <div className="w-full lg:w-1/2 flex items-center justify-center p-8">
+          <div className="w-full max-w-md">
             <button
               onClick={handleBackToStep1}
-              className="mb-4 flex items-center text-gray-600 hover:text-emerald-600 transition-colors"
+              className="mb-6 flex items-center text-gray-600 hover:text-blue-600 transition-colors"
             >
               <ArrowLeft className="w-4 h-4 mr-2" />
               Volver
             </button>
 
-            <div className="text-center mb-8">
-              <div className="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-br from-emerald-500 to-teal-600 rounded-2xl mb-4 shadow-lg">
-                <Mail className="w-8 h-8 text-white" />
-              </div>
-              <h2 className="text-2xl font-bold text-gray-800 mb-2">
-                Verificación de Profesor
+            <div className="mb-8">
+              <h2 className="text-3xl font-bold text-gray-900 mb-2">
+                Código de Verificación
               </h2>
               <p className="text-gray-600">
-                Hemos enviado un código de verificación a
-              </p>
-              <p className="text-emerald-600 font-semibold mt-1">
-                {formData.email}
+                Hemos enviado un código a{' '}
+                <span className="font-semibold text-blue-600">
+                  {formData.email}
+                </span>
               </p>
             </div>
 
             <form onSubmit={handleVerificationSubmit} className="space-y-6">
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-4 text-center">
+                <label className="block text-sm font-medium text-gray-700 mb-4">
                   Ingresa el código de 6 dígitos
                 </label>
-                <div className="flex gap-2 justify-center">
+                <div className="flex gap-2 justify-between">
                   {verificationCode.map((digit, index) => (
                     <input
                       key={index}
@@ -170,7 +184,7 @@ const Login = ({ onLogin }) => {
                       value={digit}
                       onChange={(e) => handleCodeChange(index, e.target.value)}
                       onKeyDown={(e) => handleCodeKeyDown(index, e)}
-                      className="w-12 h-14 text-center text-2xl font-bold border-2 border-gray-300 rounded-xl focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition-all"
+                      className="w-12 h-14 text-center text-2xl font-bold border-2 border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all"
                       required
                     />
                   ))}
@@ -178,12 +192,12 @@ const Login = ({ onLogin }) => {
               </div>
 
               {error && (
-                <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-xl text-sm">
-                  {error}
+                <div className="bg-red-50 border-l-4 border-red-500 text-red-700 p-4 rounded">
+                  <p className="text-sm">{error}</p>
                 </div>
               )}
 
-              <div className="bg-blue-50 border border-blue-200 rounded-xl p-4">
+              <div className="bg-blue-50 border-l-4 border-blue-500 p-4 rounded">
                 <div className="flex items-start">
                   <CheckCircle className="w-5 h-5 text-blue-500 mt-0.5 mr-3 flex-shrink-0" />
                   <div className="text-sm text-blue-800">
@@ -200,7 +214,7 @@ const Login = ({ onLogin }) => {
 
               <button
                 type="submit"
-                className="w-full bg-gradient-to-r from-emerald-500 to-teal-600 text-white py-3 rounded-xl font-medium hover:from-emerald-600 hover:to-teal-700 transition-all shadow-lg hover:shadow-xl transform hover:-translate-y-0.5"
+                className="w-full bg-gradient-to-r from-blue-600 to-blue-700 text-white py-3 px-4 rounded-lg font-medium hover:from-blue-700 hover:to-blue-800 transition-all shadow-md hover:shadow-lg"
               >
                 Verificar y Crear Cuenta
               </button>
@@ -210,7 +224,7 @@ const Login = ({ onLogin }) => {
                 onClick={() => {
                   alert('Código reenviado a ' + formData.email);
                 }}
-                className="w-full text-emerald-600 hover:text-emerald-700 font-medium transition-colors"
+                className="w-full text-blue-600 hover:text-blue-700 font-medium transition-colors text-sm"
               >
                 ¿No recibiste el código? Reenviar
               </button>
@@ -221,175 +235,216 @@ const Login = ({ onLogin }) => {
     );
   }
 
-  // PASO 1: Pantalla de login/registro principal
+  // PASO 1: Pantalla principal
   return (
-    <div className="min-h-screen bg-gradient-to-br from-emerald-50 via-teal-50 to-cyan-50 flex items-center justify-center p-4">
-      <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAiIGhlaWdodD0iNjAiIHZpZXdCb3g9IjAgMCA2MCA2MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZyBmaWxsPSJub25lIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjxwYXRoIGQ9Ik0zNiAxOGMzLjMxIDAgNiAyLjY5IDYgNnMtMi42OSA2LTYgNi02LTIuNjktNi02IDIuNjktNiA2LTZ6TTI0IDQyYzMuMzEgMCA2IDIuNjkgNiA2cy0yLjY5IDYtNiA2LTYtMi42OS02LTYgMi42OS02IDYtNnoiIHN0cm9rZT0iIzEwYjk4MSIgc3Ryb2tlLXdpZHRoPSIuNSIgb3BhY2l0eT0iLjEiLz48L2c+PC9zdmc+')] opacity-30"></div>
+    <div className="min-h-screen bg-white flex">
+      {/* Panel izquierdo - Decorativo con logo */}
+      <div className="hidden lg:flex lg:w-1/2 bg-gradient-to-br from-blue-600 via-blue-700 to-blue-900 relative overflow-hidden">
+        <div className="absolute inset-0 opacity-10">
+          <div className="absolute top-20 left-20 w-72 h-72 bg-white rounded-full blur-3xl"></div>
+          <div className="absolute bottom-20 right-20 w-96 h-96 bg-orange-400 rounded-full blur-3xl"></div>
+        </div>
+        <div className="relative z-10 flex flex-col items-center justify-center w-full p-12 text-white">
+          <img
+            src= {logo}
+            alt="ExtraEDUC Logo"
+            className="w-80 h-auto mb-8"
+          />
+          <h2 className="text-4xl font-bold mb-4 text-center">
+            Bienvenido a ExtraEDUC
+          </h2>
+          <p className="text-blue-100 text-center text-lg max-w-md">
+            Plataforma de Aprendizaje Extracurricular
+          </p>
+        </div>
+      </div>
 
-      <div className="w-full max-w-md relative">
-        <div className="bg-white/80 backdrop-blur-xl rounded-3xl shadow-2xl p-8 border border-emerald-100">
-          <div className="text-center mb-8">
-            <div className="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-br from-emerald-500 to-teal-600 rounded-2xl mb-4 shadow-lg transform rotate-3">
-              <Book className="w-8 h-8 text-white" />
+      {/* Panel derecho - Formulario */}
+      <div className="w-full lg:w-1/2 flex items-center justify-center p-8 bg-gray-50">
+        <div className="w-full max-w-md">
+          {/* Logo móvil */}
+          <div className="lg:hidden mb-8 text-center">
+            <img
+              src="/mnt/user-data/uploads/1769998053773_image.png"
+              alt="ExtraEDUC Logo"
+              className="w-48 h-auto mx-auto mb-4"
+            />
+          </div>
+
+          <div className="bg-white rounded-2xl shadow-xl p-8">
+            <div className="mb-6">
+              <h2 className="text-2xl font-bold text-gray-900 mb-2">
+                {isLogin ? 'Iniciar Sesión' : 'Crear Cuenta'}
+              </h2>
+              <p className="text-gray-600 text-sm">
+                {isLogin
+                  ? 'Ingresa tus credenciales para acceder'
+                  : 'Completa el formulario para registrarte'}
+              </p>
             </div>
-            <h1 className="text-3xl font-bold bg-gradient-to-r from-emerald-600 to-teal-600 bg-clip-text text-transparent">
-              ExtraEDUC
-            </h1>
-            <p className="text-gray-600 mt-2">
-              Plataforma de Aprendizaje Extracurricular
-            </p>
-          </div>
 
-          <div className="flex gap-2 mb-6 bg-gray-100 p-1 rounded-xl">
-            <button
-              onClick={() => {
-                setIsLogin(true);
-                resetForm();
-              }}
-              className={`flex-1 py-2 px-4 rounded-lg font-medium transition-all ${
-                isLogin
-                  ? 'bg-white text-emerald-600 shadow-sm'
-                  : 'text-gray-600 hover:text-gray-900'
-              }`}
-            >
-              Iniciar Sesión
-            </button>
-            <button
-              onClick={() => {
-                setIsLogin(false);
-                resetForm();
-              }}
-              className={`flex-1 py-2 px-4 rounded-lg font-medium transition-all ${
-                !isLogin
-                  ? 'bg-white text-emerald-600 shadow-sm'
-                  : 'text-gray-600 hover:text-gray-900'
-              }`}
-            >
-              Registro
-            </button>
-          </div>
+            {/* Tabs */}
+            <div className="flex gap-2 mb-6 bg-gray-100 p-1 rounded-lg">
+              <button
+                onClick={() => {
+                  setIsLogin(true);
+                  resetForm();
+                }}
+                className={`flex-1 py-2 px-4 rounded-md font-medium transition-all text-sm ${
+                  isLogin
+                    ? 'bg-white text-blue-600 shadow-sm'
+                    : 'text-gray-600 hover:text-gray-900'
+                }`}
+              >
+                Iniciar Sesión
+              </button>
+              <button
+                onClick={() => {
+                  setIsLogin(false);
+                  resetForm();
+                }}
+                className={`flex-1 py-2 px-4 rounded-md font-medium transition-all text-sm ${
+                  !isLogin
+                    ? 'bg-white text-blue-600 shadow-sm'
+                    : 'text-gray-600 hover:text-gray-900'
+                }`}
+              >
+                Registrarse
+              </button>
+            </div>
 
-          <form onSubmit={handleSubmit} className="space-y-4">
-            {!isLogin && (
+            <form onSubmit={handleSubmit} className="space-y-4">
+              {!isLogin && (
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Nombre Completo
+                  </label>
+                  <div className="relative">
+                    <User className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
+                    <input
+                      type="text"
+                      value={formData.name}
+                      onChange={(e) =>
+                        setFormData({ ...formData, name: e.target.value })
+                      }
+                      className="w-full pl-10 pr-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
+                      placeholder="Juan Pérez"
+                      required
+                    />
+                  </div>
+                </div>
+              )}
+
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Nombre Completo
+                  Correo Electrónico
                 </label>
                 <div className="relative">
-                  <User className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
+                  <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
                   <input
-                    type="text"
-                    value={formData.name}
+                    type="email"
+                    value={formData.email}
                     onChange={(e) =>
-                      setFormData({ ...formData, name: e.target.value })
+                      setFormData({ ...formData, email: e.target.value })
                     }
-                    className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-emerald-500 focus:border-transparent transition-all"
-                    placeholder="Juan Pérez"
+                    className="w-full pl-10 pr-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
+                    placeholder="usuario@espe.edu.ec"
                     required
                   />
                 </div>
               </div>
-            )}
 
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Correo Electrónico
-              </label>
-              <div className="relative">
-                <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
-                <input
-                  type="email"
-                  value={formData.email}
-                  onChange={(e) =>
-                    setFormData({ ...formData, email: e.target.value })
-                  }
-                  className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-emerald-500 focus:border-transparent transition-all"
-                  placeholder="usuario@espe.edu.ec"
-                  required
-                />
-              </div>
-            </div>
-
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Contraseña
-              </label>
-              <div className="relative">
-                <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
-                <input
-                  type={showPassword ? 'text' : 'password'}
-                  value={formData.password}
-                  onChange={(e) =>
-                    setFormData({ ...formData, password: e.target.value })
-                  }
-                  className="w-full pl-10 pr-12 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-emerald-500 focus:border-transparent transition-all"
-                  placeholder="••••••••"
-                  required
-                />
-                <button
-                  type="button"
-                  onClick={() => setShowPassword(!showPassword)}
-                  className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600"
-                >
-                  {showPassword ? (
-                    <EyeOff className="w-5 h-5" />
-                  ) : (
-                    <Eye className="w-5 h-5" />
-                  )}
-                </button>
-              </div>
-            </div>
-
-            {!isLogin && (
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Tipo de Usuario
+                  Contraseña
                 </label>
-                <select
-                  value={formData.role}
-                  onChange={(e) =>
-                    setFormData({ ...formData, role: e.target.value })
-                  }
-                  className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-emerald-500 focus:border-transparent transition-all"
-                >
-                  <option value="estudiante">Estudiante</option>
-                  <option value="profesor">Profesor</option>
-                </select>
-
-                {formData.role === 'profesor' && (
-                  <div className="mt-3 bg-emerald-50 border border-emerald-200 rounded-xl p-3">
-                    <p className="text-sm text-emerald-800">
-                      <strong>Siguiente paso:</strong> Recibirás un código de
-                      verificación en tu correo institucional para confirmar tu
-                      registro como profesor.
-                    </p>
-                  </div>
-                )}
+                <div className="relative">
+                  <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
+                  <input
+                    type={showPassword ? 'text' : 'password'}
+                    value={formData.password}
+                    onChange={(e) =>
+                      setFormData({ ...formData, password: e.target.value })
+                    }
+                    className="w-full pl-10 pr-12 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
+                    placeholder="••••••••"
+                    required
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setShowPassword(!showPassword)}
+                    className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600"
+                  >
+                    {showPassword ? (
+                      <EyeOff className="w-5 h-5" />
+                    ) : (
+                      <Eye className="w-5 h-5" />
+                    )}
+                  </button>
+                </div>
               </div>
-            )}
 
-            {error && (
-              <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-xl text-sm">
-                {error}
+              {!isLogin && (
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Tipo de Usuario
+                  </label>
+                  <select
+                    value={formData.role}
+                    onChange={(e) =>
+                      setFormData({ ...formData, role: e.target.value })
+                    }
+                    className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
+                  >
+                    <option value="estudiante">Estudiante</option>
+                    <option value="profesor">Profesor</option>
+                  </select>
+
+                  {formData.role === 'profesor' && (
+                    <div className="mt-3 bg-blue-50 border-l-4 border-blue-500 p-3 rounded">
+                      <p className="text-sm text-blue-800">
+                        <strong>Siguiente paso:</strong> Recibirás un código de
+                        verificación en tu correo institucional para confirmar
+                        tu registro como profesor.
+                      </p>
+                    </div>
+                  )}
+                </div>
+              )}
+
+              {error && (
+                <div className="bg-red-50 border-l-4 border-red-500 text-red-700 p-3 rounded">
+                  <p className="text-sm">{error}</p>
+                </div>
+              )}
+
+              <button
+                type="submit"
+                className="w-full bg-gradient-to-r from-blue-600 to-blue-700 text-white py-3 px-4 rounded-lg font-medium hover:from-blue-700 hover:to-blue-800 transition-all shadow-md hover:shadow-lg"
+              >
+                {isLogin
+                  ? 'Iniciar Sesión'
+                  : formData.role === 'profesor'
+                    ? 'Continuar'
+                    : 'Crear Cuenta'}
+              </button>
+            </form>
+
+            <div className="mt-6 pt-6 border-t border-gray-200">
+              <p className="text-xs font-semibold text-gray-600 mb-2 text-center">
+                Credenciales de prueba:
+              </p>
+              <div className="space-y-1 text-xs text-gray-500 text-center">
+                <p>
+                  <span className="font-medium">Profesor:</span>{' '}
+                  profesor@espe.edu.ec / 123456
+                </p>
+                <p>
+                  <span className="font-medium">Estudiante:</span>{' '}
+                  estudiante@espe.edu.ec / 123456
+                </p>
               </div>
-            )}
-
-            <button
-              type="submit"
-              className="w-full bg-gradient-to-r from-emerald-500 to-teal-600 text-white py-3 rounded-xl font-medium hover:from-emerald-600 hover:to-teal-700 transition-all shadow-lg hover:shadow-xl transform hover:-translate-y-0.5"
-            >
-              {isLogin
-                ? 'Iniciar Sesión'
-                : formData.role === 'profesor'
-                  ? 'Continuar'
-                  : 'Crear Cuenta'}
-            </button>
-          </form>
-
-          <div className="mt-6 text-center text-sm text-gray-600">
-            <p className="font-semibold mb-2">Credenciales de prueba:</p>
-            <p className="mt-1">Profesor: profesor@espe.edu.ec / 123456</p>
-            <p>Estudiante: estudiante@espe.edu.ec / 123456</p>
+            </div>
           </div>
         </div>
       </div>
